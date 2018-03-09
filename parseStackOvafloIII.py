@@ -112,6 +112,7 @@ def select_by_value(tag, select_attr, select_vals, infile, outfile):
 def parse_posts(infile):
     questions = []
     answers = []
+    accepted_answer_ids = set()
     for i, line in enumerate(infile):
         if i % 10000 == 0:
             logging.debug("\t{}\t{} questions,\t{} answers".format(i, len(questions), len(answers)))
@@ -130,10 +131,13 @@ def parse_posts(infile):
 
         if rec.attrib['PostTypeId'] == '1':  # question
             vals = [ rec.attrib.get(attr) for attr in QUESTION_FIELDS ] + [body_len]
+            accepted_answer_ids.add(rec.attrib.get('AcceptedAnswerId'))
             questions.append(tuple(vals))
 
         else:  # answer
-            vals = [ rec.attrib.get(attr) for attr in ANSWER_FIELDS ] + [body_len]
+            accepted = rec.attrib['Id'] in accepted_answer_ids  # if we come across the answer
+                                                                # first, this will break
+            vals = [ rec.attrib.get(attr) for attr in ANSWER_FIELDS ] + [body_len, accepted]
             answers.append(tuple(vals))
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
@@ -143,7 +147,7 @@ def parse_posts(infile):
 
     logging.info("creating DataFrame for {} posts".format(len(answers)))
     index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id', int)
-    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS+['Length'],
+    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS+['Length', 'Accepted'],
                              dtype=np.int64)
 
     return question_df, answer_df
@@ -242,8 +246,11 @@ if __name__ == '__main__':
 
         # print "\n**************************\n"
 
-        # for some reason this is object
+        # for some reason these is object
         quest_df['OwnerUserId'] = pd.to_numeric(quest_df['OwnerUserId'], downcast='integer')
+        user_df['Age'] = pd.to_numeric(user_df['Age'], downcast='integer')
+
+
         # print quest_df.head(), "\n", quest_df.dtypes
 
         # key_user = 230814
@@ -256,21 +263,22 @@ if __name__ == '__main__':
         logging.debug("joined table has {} rows".format(len(user_question_df)))
         # print user_question_df.head(), "\n", user_question_df.dtypes
 
-        # xy_attrs = QUESTION_FIELDS + ['Length'] + [ v.items()[0][0] for v in aggs.values() ]
 
-        xy_attrs = ['Score', 'CommentCount', 'ViewCount', 'AnswerCount', 'FavoriteCount',
-                    'AcceptedAnswerId', 'Length',
-                    'mean_CommCount', 'mean_Length', 'mean_Score']
-        logging.info("x, y attrs: {}".format(xy_attrs))
-
-        z_attrs_disc = ['Id_user', 'Location']
-        z_attrs_cont = ['Reputation', 'Views', 'UpVotes', 'DownVotes', 'Age']
-
-        user_question_df['Age'] = pd.to_numeric(user_question_df['Age'], downcast='integer')
+        logging.info("joining answers and questions")
+        user_answer_df = ans_df.join(user_df, on='OwnerUserId', rsuffix='_user')
+        logging.debug("joined table has {} rows".format(len(user_answer_df)))
 
 
         with open("indy_results.tsv", 'w') as resultfile:
 
+            # xy_attrs = QUESTION_FIELDS + ['Length'] + [ v.items()[0][0] for v in aggs.values() ]
+            xy_attrs = ['Score', 'CommentCount', 'ViewCount', 'AnswerCount', 'FavoriteCount',
+                        'AcceptedAnswerId', 'Length',
+                        'mean_CommCount', 'mean_Length', 'mean_Score']
+            logging.info("x, y attrs: {}".format(xy_attrs))
+
+            z_attrs_disc = ['Id_user', 'Location']
+            z_attrs_cont = ['Reputation', 'Views', 'UpVotes', 'DownVotes', 'Age']
 
             for i, x in enumerate(xy_attrs):
                 for y in xy_attrs[i+1:]:
@@ -297,6 +305,36 @@ if __name__ == '__main__':
                         stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
+
+            xy_attrs = ['Score', 'CommentCount', 'Length', 'Accepted']
+            for i, x in enumerate(xy_attrs):
+                for y in xy_attrs[i+1:]:
+
+                    xy_mat = user_answer_df.as_matrix(columns=[x, y])
+                    x_arr = xy_mat[:, 0]
+                    y_arr = xy_mat[:, 1]
+                    x_lst = x_arr.tolist()
+                    y_lst = y_arr.tolist()
+                    logging.debug("examining x={}, y={}".format(x, y))
+
+                    # marg = Contingency.rsquare(xvals, yvals)
+                    r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
+                    logging.debug("marg rsquare: {} p={}".format(r, pval))
+                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, r, pval))
+
+                    for z in z_attrs_disc:
+                        z_lst = user_question_df[z].tolist()
+                        stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        logging.debug("cond {}: {} {}".format(z, stat, pval))
+                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
+                    for z in z_attrs_cont:
+                        zvals = user_question_df.as_matrix(columns=[z])
+                        stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        logging.debug("cond {}: {} {}".format(z, stat, pval))
+                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
 
 
 
