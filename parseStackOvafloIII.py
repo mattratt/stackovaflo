@@ -87,6 +87,24 @@ def select_by_date(tag, start_dt, end_dt, infile, outfile, date_attr='CreationDa
     logging.debug("kept {} / {} {} records".format(good_count, good_count+bad_count, tag))
 
 
+def select_by_value(tag, select_attr, select_vals, infile, outfile):
+    mark = '<' + tag + ' '
+    good_count = 0
+    bad_count = 0
+    for i, line in enumerate(infile):
+        if i % 100000 == 0:
+            logging.debug("\t{} kept {}".format(i, good_count))
+        if line.lstrip().startswith(mark):
+            parsed = ET.fromstring(line)
+            if parsed.attrib.get(select_attr) not in select_vals:
+                bad_count += 1
+                continue
+            else:
+                good_count += 1
+        outfile.write(line)
+    logging.debug("kept {} / {} {} records".format(good_count, good_count+bad_count, tag))
+
+
 def parse_posts(infile):
     questions = []
     answers = []
@@ -181,9 +199,13 @@ if __name__ == '__main__':
             print quest_df.head()
             print ans_df.head()
 
-        with open(sys.argv[2], 'r') as infile:
-            user_ids = quest_df['OwnerUserId'].tolist() + quest_df['OwnerUserId'].tolist()
-            user_df = parse_users(infile, user_ids)
-            print user_df.head()
+        user_ids = set(quest_df['OwnerUserId'].tolist() + quest_df['OwnerUserId'].tolist())
+        if 1:  # save selected user file
+            with open(sys.argv[2], 'r') as infile, open(sys.argv[3], 'w') as outfile:
+                select_by_value('row', 'Id', user_ids, infile, outfile)
+
+        # with open(sys.argv[2], 'r') as infile:
+        #     user_df = parse_users(infile, user_ids)
+        #     print user_df.head()
 
 
