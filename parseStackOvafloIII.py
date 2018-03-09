@@ -232,7 +232,7 @@ if __name__ == '__main__':
         key = 2354299
         print "quest:\n", quest_df.loc[quest_df['Id'] == key]
         print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
-        print "ans_aggreg:\n", answer_aggregs_df.loc[answer_aggregs_df['ParentId'] == key]
+        print "ans_aggreg:\n", answer_aggregs_df.loc[key]
 
 
         logging.info("joining answer cols to questions")
