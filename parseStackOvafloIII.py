@@ -291,13 +291,12 @@ if __name__ == '__main__':
         key = 2353726
         print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
         print "quest:\n", quest_df.loc[quest_df['Id'] == key]
-        print "quest:\n", quest_df.loc[key]
+        # print "quest:\n", quest_df.loc[key]
 
 
         question_answer_df = ans_df.join(quest_df, on='ParentId', rsuffix='_quest')
 
         print "question_answer:\n", question_answer_df.loc[question_answer_df['ParentId'] == key]
-
 
 
         logging.debug("joined table has {} rows".format(len(question_answer_df)))
