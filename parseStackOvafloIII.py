@@ -243,10 +243,10 @@ if __name__ == '__main__':
         print quest_df.head(), "\n", quest_df.dtypes
 
         print "\n**************************\n"
-        key_user = '230814'
-        print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key]
-        print "user:\n", user_df.loc[user_df['Id'] == key]
-        print "user:\n", user_df.loc[key]
+        key_user = 230814
+        print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key_user]
+        print "user:\n", user_df.loc[user_df['Id'] == key_user]
+        print "user:\n", user_df.loc[key_user]
 
         logging.info("joining users and questions")
         user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='_user')
