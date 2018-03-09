@@ -135,21 +135,21 @@ def parse_posts(infile):
             answers.append(tuple(vals))
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
-    index_vals = get_index_vals(questions, QUESTION_FIELDS, 'Id')
+    index_vals = get_index_vals(questions, QUESTION_FIELDS, 'Id', int)
     question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS+['Length'],
                                dtype=np.int64)
 
     logging.info("creating DataFrame for {} posts".format(len(answers)))
-    index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id')
+    index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id', int)
     answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS+['Length'],
                              dtype=np.int64)
 
     return question_df, answer_df
 
 
-def get_index_vals(tups, col_names, index_col_name):
+def get_index_vals(tups, col_names, index_col_name, index_col_type=str):
     p = col_names.index(index_col_name)
-    return [t[p] for t in tups]
+    return [index_col_type(t[p]) for t in tups]
 
 
 def parse_users(infile, selects=None):
@@ -178,7 +178,7 @@ def parse_users(infile, selects=None):
         users.append(tuple(rec.attrib.get(attr) for attr in USER_FIELDS))
 
     logging.info("creating DataFrame for {} users".format(len(users)))
-    index_vals = get_index_vals(users, USER_FIELDS, 'Id')
+    index_vals = get_index_vals(users, USER_FIELDS, 'Id', int)
     return pd.DataFrame(users, index=index_vals, columns=USER_FIELDS, dtype=np.int64)
 
 
@@ -226,7 +226,7 @@ if __name__ == '__main__':
         answer_aggregs_df.columns = answer_aggregs_df.columns.droplevel(0)
         # answer_aggregs_df.columns = ["_".join(x) for x in answer_aggregs_df.columns.ravel()]
         # answer_aggregs_df.columns = []
-        print answer_aggregs_df.head(300), "\n", answer_aggregs_df.dtypes
+        print answer_aggregs_df.head(), "\n", answer_aggregs_df.dtypes
 
 
         key = 2354299
