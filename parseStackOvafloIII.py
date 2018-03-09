@@ -338,6 +338,8 @@ if __name__ == '__main__':
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
+                    logging.debug("\n")
+
 
             xy_attrs = ['Score', 'CommentCount', 'Length'] #, 'Accepted']
             for i, x in enumerate(xy_attrs):
@@ -370,6 +372,9 @@ if __name__ == '__main__':
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
+                    logging.debug("\n")
+
+
 
             xy_attrs = ['Score', 'CommentCount', 'Length'] #, 'Accepted']
             z_attrs_disc = ['Id_quest']
@@ -381,17 +386,17 @@ if __name__ == '__main__':
 
                     stat, pval = pearson(question_answer_df, x, y)
                     logging.debug("marg rsquare: {} p={}".format(stat, pval))
-                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
+                    resultfile.write("a.{}\ta.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
 
                     for z in z_attrs_disc:
                         stat, pval = pearson_block(question_answer_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
-                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+                        resultfile.write("a.{}\ta.{}\tq.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
                     for z in z_attrs_cont:
                         stat, pval = pearson_partial(question_answer_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
-                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+                        resultfile.write("a.{}\ta.{}\tq.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
 
 
