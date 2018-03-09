@@ -284,27 +284,18 @@ if __name__ == '__main__':
         user_answer_df = ans_df.join(user_df, on='OwnerUserId', rsuffix='_user')
         logging.debug("joined table has {} rows".format(len(user_answer_df)))
 
-        print "\n**************************\n"
+        # print "\n**************************\n"
         logging.info("joining answers and questions")
-        print "ANSWERS\n", ans_df.head(), "\n", ans_df.dtypes
-        print "QUESTIONS\n", quest_df.head(), "\n", quest_df.dtypes
-        key = 2353228
-
-        
-        print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
-        print "quest:\n", quest_df.loc[quest_df['Id'] == key]
+        # print "ANSWERS\n", ans_df.head(), "\n", ans_df.dtypes
+        # print "QUESTIONS\n", quest_df.head(), "\n", quest_df.dtypes
+        # key = 2353228
+        # print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
+        # print "quest:\n", quest_df.loc[quest_df['Id'] == key]
         # print "quest:\n", quest_df.loc[key]
-
-
         question_answer_df = ans_df.join(quest_df, on='ParentId', rsuffix='_quest')
-
-        print "question_answer:\n", question_answer_df.loc[question_answer_df['ParentId'] == key]
-
-
+        # print "question_answer:\n", question_answer_df.loc[question_answer_df['ParentId'] == key]
         logging.debug("joined table has {} rows".format(len(question_answer_df)))
-        print "JOINED\n", question_answer_df.head(300), "\n", question_answer_df.dtypes
-
-        sys.exit()
+        # print "JOINED\n", question_answer_df.head(300), "\n", question_answer_df.dtypes
 
 
         with open("indy_results.tsv", 'w') as resultfile:
@@ -381,8 +372,31 @@ if __name__ == '__main__':
 
 
             xy_attrs = ['Score', 'CommentCount', 'Length'] #, 'Accepted']
-            # for i, x in enumerate(xy_attrs):
-            #     for y in xy_attrs[i+1:]:
+            z_attrs_disc = ['Id_quest']
+            z_attrs_cont = ['Score_quest', 'CommentCount_quest', 'ViewCount', 'AnswerCount',
+                            'FavoriteCount', 'Length_quest']
+            for i, x in enumerate(xy_attrs):
+                for y in xy_attrs[i+1:]:
+                    logging.debug("examining x={}, y={}".format(x, y))
+
+                    stat, pval = pearson(question_answer_df, x, y)
+                    logging.debug("marg rsquare: {} p={}".format(stat, pval))
+                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
+
+                    for z in z_attrs_disc:
+                        # z_lst = user_answer_df[z].tolist()
+                        # stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        stat, pval = pearson_block(question_answer_df, x, y, z)
+                        logging.debug("cond {}: {} {}".format(z, stat, pval))
+                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
+                    for z in z_attrs_cont:
+                        # zvals = user_answer_df.as_matrix(columns=[z])
+                        # stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        stat, pval = pearson_partial(question_answer_df, x, y, z)
+                        logging.debug("cond {}: {} {}".format(z, stat, pval))
+                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
 
 
 
