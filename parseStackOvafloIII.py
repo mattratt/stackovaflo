@@ -17,7 +17,8 @@ def select_by_date(tag, start_dt, end_dt, infile, outfile, date_attr='CreationDa
         if line.lstrip().startswith(mark):
             parsed = ET.fromstring(line)
             if date_attr in parsed.attrib:
-                dt = datetime.datetime.strptime(parsed.attrib[date_attr])
+                # 2008-07-31T23:55:37.967
+                dt = datetime.datetime.strptime(parsed.attrib[date_attr], "%Y-%m-%dT%H:%M:%S")
                 if (dt < start_dt) or (end_dt <= dt):
                     bad_count += 1
                     continue
@@ -32,8 +33,8 @@ def select_by_date(tag, start_dt, end_dt, infile, outfile, date_attr='CreationDa
 
 if __name__ == '__main__':
 
-    if 1:
-        # do selection by date
+    if 1:  # do selection by date
+        USAGE = sys.argv[0] + " dt1 dt2 infile outfile"
         dt1 = datetime.datetime.strptime(sys.argv[1], "%Y%m%d")
         dt2 = datetime.datetime.strptime(sys.argv[2], "%Y%m%d")
         with open(sys.argv[3], 'r') as infile, open(sys.argv[4], 'w') as outfile:
