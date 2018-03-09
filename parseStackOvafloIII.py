@@ -270,6 +270,9 @@ if __name__ == '__main__':
         z_attrs_disc = ['Id_user', 'Location']
         z_attrs_cont = ['Reputation', 'Views', 'UpVotes', 'DownVotes', 'Age']
 
+        user_question_df['Age'] = pd.to_numeric(user_question_df['Age'], downcast='integer')
+
+
         for i, x in enumerate(xy_attrs):
             for y in xy_attrs[i+1:]:
                 xvals = user_question_df[x].tolist()
