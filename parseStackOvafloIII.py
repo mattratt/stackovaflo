@@ -11,7 +11,7 @@ def select_by_date(tag, start_dt, end_dt, infile, outfile, date_attr='CreationDa
     good_count = 0
     bad_count = 0
     for i, line in enumerate(infile):
-        if i % 10000 == 0:
+        if i % 100000 == 0:
             logging.debug("\t{}".format(i))
         if line.lstrip().startswith(mark):
             parsed = ET.fromstring(line)
