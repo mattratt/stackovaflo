@@ -226,39 +226,35 @@ if __name__ == '__main__':
                 'Length': {'mean_Length': 'mean'}}
         answer_aggregs_df = ans_df.groupby('ParentId').agg(aggs)
         answer_aggregs_df.columns = answer_aggregs_df.columns.droplevel(0)
-        # answer_aggregs_df.columns = ["_".join(x) for x in answer_aggregs_df.columns.ravel()]
-        # answer_aggregs_df.columns = []
-        print answer_aggregs_df.head(), "\n", answer_aggregs_df.dtypes
+        # print answer_aggregs_df.head(), "\n", answer_aggregs_df.dtypes
 
-
-        key = 2354299
-        print "quest:\n", quest_df.loc[quest_df['Id'] == key]
-        print "quest:\n", quest_df.loc[key]
-        print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
-        print "ans_aggreg:\n", answer_aggregs_df.loc[key]
-
+        # key = 2354299
+        # print "quest:\n", quest_df.loc[quest_df['Id'] == key]
+        # print "quest:\n", quest_df.loc[key]
+        # print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
+        # print "ans_aggreg:\n", answer_aggregs_df.loc[key]
 
         logging.info("joining answer cols to questions")
         quest_df = quest_df.join(answer_aggregs_df, rsuffix='_answer')
-        print "quest joined:\n", quest_df.loc[quest_df['Id'] == key]
-        print "quest joined:\n", quest_df.loc[key]
-        print quest_df.head(), "\n", quest_df.dtypes
+        # print "quest joined:\n", quest_df.loc[quest_df['Id'] == key]
+        # print "quest joined:\n", quest_df.loc[key]
+        # print quest_df.head(), "\n", quest_df.dtypes
 
-        print "\n**************************\n"
+        # print "\n**************************\n"
 
         # for some reason this is object
         quest_df['OwnerUserId'] = pd.to_numeric(quest_df['OwnerUserId'], downcast='integer')
-        print quest_df.head(), "\n", quest_df.dtypes
+        # print quest_df.head(), "\n", quest_df.dtypes
 
-        key_user = 230814
-        print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key_user]
-        print "user:\n", user_df.loc[user_df['Id'] == key_user]
-        print "user:\n", user_df.loc[key_user]
+        # key_user = 230814
+        # print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key_user]
+        # print "user:\n", user_df.loc[user_df['Id'] == key_user]
+        # print "user:\n", user_df.loc[key_user]
 
         logging.info("joining users and questions")
         user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='_user')
         logging.debug("joined table has {} rows".format(len(user_question_df)))
-        print user_question_df.head(), "\n", user_question_df.dtypes
+        # print user_question_df.head(), "\n", user_question_df.dtypes
 
         # xy_attrs = QUESTION_FIELDS + ['Length'] + [ v.items()[0][0] for v in aggs.values() ]
 
@@ -273,29 +269,35 @@ if __name__ == '__main__':
         user_question_df['Age'] = pd.to_numeric(user_question_df['Age'], downcast='integer')
 
 
-        for i, x in enumerate(xy_attrs):
-            for y in xy_attrs[i+1:]:
-                xvals = user_question_df[x].tolist()
-                yvals = user_question_df[y].tolist()
-                logging.debug("examining x={}, y={}".format(x, y))
+        with open("indy_results.tsv", 'w') as resultfile:
 
-                marg = Contingency.rsquare(xvals, yvals)
-                logging.debug("marg rsquare: {}".format(marg))
 
-                for z in z_attrs_disc:
-                    stat, pval, eff = Contingency.pearsonBlock(xvals, yvals,
-                                                               user_question_df[z].tolist(),
-                                                               pVal=True, effect=True)
-                    logging.debug("cond {}: {} {}".format(z, stat, pval))
+            for i, x in enumerate(xy_attrs):
+                for y in xy_attrs[i+1:]:
+                    xy_mat = user_question_df.as_matrix(columns=[x, y])
+                    x_arr = xy_mat[:, 0]
+                    y_arr = xy_mat[:, 1]
+                    x_lst = x_arr.tolist()
+                    y_lst = y_arr.tolist()
+                    logging.debug("examining x={}, y={}".format(x, y))
 
-                mat = user_question_df.as_matrix(columns=[x, y])
-                xvals = mat[:, 0]
-                yvals = mat[:, 1]
-                for z in z_attrs_cont:
-                    zvals = user_question_df.as_matrix(columns=[z])
+                    # marg = Contingency.rsquare(xvals, yvals)
+                    r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
+                    logging.debug("marg rsquare: {} p={}".format(r, pval))
+                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, r, pval))
 
-                    stat, pval = Contingency.partial_corr(xvals, yvals, zvals, pval=True)
-                    logging.debug("cond {}: {} {}".format(z, stat, pval))
+                    for z in z_attrs_disc:
+                        z_lst = user_question_df[z].tolist()
+                        stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        logging.debug("cond {}: {} {}".format(z, stat, pval))
+                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
+                    for z in z_attrs_cont:
+                        zvals = user_question_df.as_matrix(columns=[z])
+                        stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        logging.debug("cond {}: {} {}".format(z, stat, pval))
+                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
 
 
 
