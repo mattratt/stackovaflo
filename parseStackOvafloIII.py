@@ -214,14 +214,14 @@ if __name__ == '__main__':
             user_df = parse_users(infile)
             print user_df.head()
 
-        # # add answer aggregs to questions, then join user table
-        # logging.info("aggreg answer cols")
-        # answer_aggregs_df = ans_df.groupby('ParentId').agg({'Score': 'mean',
-        #                                                     'CommentCount': 'mean',
-        #                                                     'Length': 'mean'})
-        # answer_aggregs_df.columns = ["_".join(x) for x in answer_aggregs_df.columns.ravel()]
-        # print answer_aggregs_df.head()
-        #
+        # add answer aggregs to questions, then join user table
+        logging.info("aggreg answer cols")
+        answer_aggregs_df = ans_df.groupby('ParentId').agg({'Score': 'mean',
+                                                            'CommentCount': 'mean',
+                                                            'Length': 'mean'})
+        answer_aggregs_df.columns = ["_".join(x) for x in answer_aggregs_df.columns.ravel()]
+        print answer_aggregs_df.head()
+
         # logging.info("joining answer cols to questions")
         # quest_df = quest_df.join(answer_aggregs_df, on='ParentId', rsuffix='answer_')
         # print quest_df.head()
