@@ -92,7 +92,7 @@ def parse_posts(infile):
     answers = []
     for i, line in enumerate(infile):
         if i % 10000 == 0:
-            logging.debug("\t{}\t{} questions, {} answers".format(i, len(questions), len(answers)))
+            logging.debug("\t{}\t{} questions,\t{} answers".format(i, len(questions), len(answers)))
 
         try:
             rec = ET.fromstring(line)
@@ -110,12 +110,19 @@ def parse_posts(infile):
             answers.append(tuple(rec.attrib.get(attr) for attr in ANSWER_FIELDS))
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
-    question_df = pd.DataFrame(questions, index="Id", columns=QUESTION_FIELDS)
+    index_vals = get_index_vals(questions, QUESTION_FIELDS, 'Id')
+    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS)
 
     logging.info("creating DataFrame for {} posts".format(len(answers)))
-    answer_df = pd.DataFrame(answers, index="Id", columns=ANSWER_FIELDS)
+    index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id')
+    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS)
 
     return question_df, answer_df
+
+
+def get_index_vals(tups, col_names, index_col_name):
+    p = col_names.index(index_col_name)
+    return [t[p] for t in tups]
 
 
 def parse_users(infile, selects=None):
@@ -126,7 +133,7 @@ def parse_users(infile, selects=None):
     reject_count = 0
     for i, line in enumerate(infile):
         if i % 10000 == 0:
-            logging.debug("\t{}\t{} users, {} rejects".format(i, len(users), reject_count))
+            logging.debug("\t{}\t{} users,\t{} rejects".format(i, len(users), reject_count))
         try:
             rec = ET.fromstring(line)
         except ET.ParseError as err:
@@ -143,7 +150,8 @@ def parse_users(infile, selects=None):
         users.append(tuple(rec.attrib[attr] for attr in USER_FIELDS))
 
     logging.info("creating DataFrame for {} users".format(len(users)))
-    return pd.DataFrame(users, index="Id", columns=USER_FIELDS)
+    index_vals = get_index_vals(users, USER_FIELDS, 'Id')
+    return pd.DataFrame(users, index=index_vals, columns=USER_FIELDS)
 
 
 
