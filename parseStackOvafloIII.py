@@ -327,7 +327,7 @@ if __name__ == '__main__':
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
 
-            xy_attrs = ['Score', 'CommentCount', 'Length', 'Accepted']
+            xy_attrs = ['Score', 'CommentCount', 'Length'] #, 'Accepted']
             for i, x in enumerate(xy_attrs):
                 for y in xy_attrs[i+1:]:
 
