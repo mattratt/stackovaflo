@@ -286,7 +286,7 @@ if __name__ == '__main__':
                     logging.debug("cond {}: {} {}".format(z, stat, pval))
 
                 for z in z_attrs_cont:
-                    stat, pval = Contingency.partial_corr(xvals, yvals,
+                    stat, pval = Contingency.partial_corr(user_question_df[x], user_question_df[y],
                                                           user_question_df[z].tolist(), pval=True)
                     logging.debug("cond {}: {} {}".format(z, stat, pval))
 
