@@ -228,8 +228,15 @@ if __name__ == '__main__':
         # answer_aggregs_df.columns = []
         print answer_aggregs_df.head(300), "\n", answer_aggregs_df.dtypes
 
+
+        key = 2354299
+        print "quest:\n", quest_df.loc[quest_df['Id'] == key]
+        print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
+        print "ans_aggreg:\n", answer_aggregs_df.loc[answer_aggregs_df['ParentId'] == key]
+
+
         logging.info("joining answer cols to questions")
-        quest_df = quest_df.join(answer_aggregs_df, rsuffix='answer_')
+        quest_df = quest_df.join(answer_aggregs_df, rsuffix='_answer')
         print quest_df.head(300)
 
         # logging.info("joining users and questions")
