@@ -368,8 +368,8 @@ if __name__ == '__main__':
 
 
             xy_attrs = ['Score', 'CommentCount', 'Length'] #, 'Accepted']
-            for i, x in enumerate(xy_attrs):
-                for y in xy_attrs[i+1:]:
+            # for i, x in enumerate(xy_attrs):
+            #     for y in xy_attrs[i+1:]:
 
 
 
