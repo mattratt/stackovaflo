@@ -243,6 +243,11 @@ if __name__ == '__main__':
         print quest_df.head(), "\n", quest_df.dtypes
 
         print "\n**************************\n"
+
+        # for some reason this is object
+        quest_df[['OwnerUserId']] = quest_df[['OwnerUserId']].apply(pd.to_numeric)
+        print quest_df.head(), "\n", quest_df.dtypes
+
         key_user = 230814
         print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key_user]
         print "user:\n", user_df.loc[user_df['Id'] == key_user]
