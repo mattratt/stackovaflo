@@ -220,7 +220,7 @@ if __name__ == '__main__':
         # add answer aggregs to questions, then join user table
         logging.info("aggreg answer cols")
         aggs = {'Score': 'mean', 'CommentCount': 'mean', 'Length': 'mean'}
-        answer_aggregs_df = ans_df.groupby('ParentId').agg()
+        answer_aggregs_df = ans_df.groupby('ParentId').agg(aggs)
         # answer_aggregs_df.columns = ["_".join(x) for x in answer_aggregs_df.columns.ravel()]
         # answer_aggregs_df.columns = []
         print answer_aggregs_df.head(), "\n", answer_aggregs_df.dtypes
