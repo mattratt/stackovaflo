@@ -240,8 +240,12 @@ if __name__ == '__main__':
         quest_df = quest_df.join(answer_aggregs_df, rsuffix='_answer')
         print "quest joined:\n", quest_df.loc[quest_df['Id'] == key]
         print "quest joined:\n", quest_df.loc[key]
-
         print quest_df.head()
+
+        key_user = 230814
+        print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key]
+        print "user:\n", user_df.loc[user_df['Id'] == key]
+        print "user:\n", user_df.loc[key]
 
         logging.info("joining users and questions")
         user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='_user')
