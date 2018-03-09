@@ -285,10 +285,20 @@ if __name__ == '__main__':
         logging.debug("joined table has {} rows".format(len(user_answer_df)))
 
         logging.info("joining answers and questions")
-        print ans_df.head(), "\n", ans_df.dtypes
-        print quest_df.head(), "\n", quest_df.dtypes
+        # print ans_df.head(), "\n", ans_df.dtypes
+        # print quest_df.head(), "\n", quest_df.dtypes
+        key = 2353197
+        print "quest:\n", quest_df.loc[quest_df['Id'] == key]
+        print "quest:\n", quest_df.loc[key]
+        print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
+
 
         question_answer_df = ans_df.join(quest_df, on='ParentId', rsuffix='_quest')
+
+        print "question_answer:\n", question_answer_df.loc[question_answer_df['ParentId'] == key]
+
+
+
         logging.debug("joined table has {} rows".format(len(question_answer_df)))
         print question_answer_df.head(), "\n", question_answer_df.dtypes
 
