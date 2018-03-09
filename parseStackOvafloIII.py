@@ -358,14 +358,14 @@ if __name__ == '__main__':
                     # r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
                     stat, zscore, pval = pearson(user_answer_df, x, y)
                     logging.debug("marg rsquare: {} p={}".format(stat, pval))
-                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
+                    resultfile.write("a.{}\ta.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
 
                     for z in z_attrs_disc:
                         # z_lst = user_answer_df[z].tolist()
                         # stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
                         zscore, pval = pearson_block(user_answer_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, zscore, pval))
-                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\t{}\n".format(x, y, z, None, zscore, pval))
+                        resultfile.write("a.{}\ta.{}\tu.{}\t{}\t{}\t{}\n".format(x, y, z, None, zscore, pval))
 
 
                     # for z in z_attrs_cont:
@@ -394,7 +394,7 @@ if __name__ == '__main__':
                     for z in z_attrs_disc:
                         zscore, pval = pearson_block(question_answer_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, zscore, pval))
-                        resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\t{}\n".format(x, y, z, None, zscore, pval))
+                        resultfile.write("a.{}\ta.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, z, None, zscore, pval))
 
 
 
