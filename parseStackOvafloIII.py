@@ -202,8 +202,8 @@ if __name__ == '__main__':
 
         with open(sys.argv[1], 'r') as infile:
             quest_df, ans_df = parse_posts(infile)
-            print quest_df.head()
-            print ans_df.head()
+            print quest_df.head(), "\n", quest_df.dtypes
+            print ans_df.head(), "\n", ans_df.dtypes
 
         if 0:  # save selected user file
             user_ids = set(quest_df['OwnerUserId'].tolist() + quest_df['OwnerUserId'].tolist())
@@ -212,7 +212,7 @@ if __name__ == '__main__':
 
         with open(sys.argv[2], 'r') as infile:
             user_df = parse_users(infile)
-            print user_df.head()
+            print user_df.head(), "\n", user_df.dtypes
 
         # add answer aggregs to questions, then join user table
         logging.info("aggreg answer cols")
