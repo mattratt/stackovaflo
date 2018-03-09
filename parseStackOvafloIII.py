@@ -243,7 +243,8 @@ if __name__ == '__main__':
 
         print quest_df.head()
 
-        # logging.info("joining users and questions")
-        # user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='user_')
-        # logging.debug("joined table has {} rows".format(len(user_question_df)))
-        # print user_question_df.head()
+        logging.info("joining users and questions")
+        user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='_user')
+        logging.debug("joined table has {} rows".format(len(user_question_df)))
+        print user_question_df.head()
+
