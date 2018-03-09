@@ -5,6 +5,8 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import numpy as np
 
+import Contingency
+
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
 pd.set_option('display.width', 240)
 
@@ -257,5 +259,28 @@ if __name__ == '__main__':
         user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='_user')
         logging.debug("joined table has {} rows".format(len(user_question_df)))
         print user_question_df.head(), "\n", user_question_df.dtypes
+
+        # xy_attrs = QUESTION_FIELDS + ['Length'] + [ v.items()[0][0] for v in aggs.values() ]
+
+        xy_attrs = ['Score', 'CommentCount', 'ViewCount', 'AnswerCount', 'FavoriteCount',
+                    'AcceptedAnswerId', 'Length',
+                    'mean_CommCount', 'mean_Length', 'mean_Score']
+        logging.info("x, y attrs: {}".format(xy_attrs))
+
+        for i, x in enumerate(xy_attrs):
+            for y in xy_attrs[i+1:]:
+                logging.debug("examining x={}, y={}".format(x, y))
+
+                marg = Contingency.rsquare(user_question_df[x].tolist(),
+                                           user_question_df[y].tolist())
+                logging.debug("marg rsquare: {}".format(marg))
+
+                
+
+
+
+
+
+
 
 
