@@ -199,13 +199,17 @@ if __name__ == '__main__':
             print quest_df.head()
             print ans_df.head()
 
-        user_ids = set(quest_df['OwnerUserId'].tolist() + quest_df['OwnerUserId'].tolist())
-        if 1:  # save selected user file
+        if 0:  # save selected user file
+            user_ids = set(quest_df['OwnerUserId'].tolist() + quest_df['OwnerUserId'].tolist())
             with open(sys.argv[2], 'r') as infile, open(sys.argv[3], 'w') as outfile:
                 select_by_value('row', 'Id', user_ids, infile, outfile)
 
-        # with open(sys.argv[2], 'r') as infile:
-        #     user_df = parse_users(infile, user_ids)
-        #     print user_df.head()
+        with open(sys.argv[2], 'r') as infile:
+            user_df = parse_users(infile)
+            print user_df.head()
 
+        # join user table to questions
+        logging.info("joining users and questions")
+        user_question_df = quest_df.join(user_df, on='OwnerUserId')
+        logging.debug("joined table has {} rows".format(len(user_question_df)))
 
