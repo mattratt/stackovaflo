@@ -288,7 +288,9 @@ if __name__ == '__main__':
         logging.info("joining answers and questions")
         print "ANSWERS\n", ans_df.head(), "\n", ans_df.dtypes
         print "QUESTIONS\n", quest_df.head(), "\n", quest_df.dtypes
-        key = 2353726
+        key = 2353228
+
+        
         print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
         print "quest:\n", quest_df.loc[quest_df['Id'] == key]
         # print "quest:\n", quest_df.loc[key]
