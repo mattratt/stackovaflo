@@ -804,7 +804,7 @@ def pearsonBlock(vals, yVals=None, blockVals=None, pVal=False, effect=False):
             smallBlocks += 1
     # sys.stderr.write("got %d good blocks, %d constant, %d small\n" % (len(tupsCorrSizeVar), constBlocks, smallBlocks))
         
-    sumSizes = sum([ t[1] for t in tupsCorrSizeVar ])
+    sumSizes = float(sum([ t[1] for t in tupsCorrSizeVar ]))
     # sys.stderr.write("block correlations: %s\n" % str([ t[0] for t in tupsCorrSizeVar ]))
     # sys.stderr.write("block sizes: %s\n" % str([ t[1] for t in tupsCorrSizeVar ]))
     # sys.stderr.write("block sizes: %s\n" % str(histogram([ t[1] for t in tupsCorrSizeVar ])))
