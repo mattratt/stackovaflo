@@ -195,7 +195,7 @@ def pearson(df_orig, x, y):
 
 def pearson_partial(df_orig, x, y, z):
     xyz_mat = df_orig[[x, y, z]].dropna().as_matrix()
-    stat, pval = Contingency.partial_corr(xyz_mat[:, 0], xyz_mat[:, 1], xyz_mat[:, 2], pval=True)
+    stat, pval = Contingency.partial_corr(xyz_mat[:, 0], xyz_mat[:, 1], xyz_mat[:, [2]], pval=True)
     return stat, pval
 
 def pearson_block(df_orig, x, y, z):
