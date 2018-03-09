@@ -243,7 +243,7 @@ if __name__ == '__main__':
         print quest_df.head(), "\n", quest_df.dtypes
 
         print "\n**************************\n"
-        key_user = 230814
+        key_user = '230814'
         print "quest:\n", quest_df.loc[quest_df['OwnerUserId'] == key]
         print "user:\n", user_df.loc[user_df['Id'] == key]
         print "user:\n", user_df.loc[key]
