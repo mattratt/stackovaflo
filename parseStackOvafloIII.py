@@ -267,15 +267,29 @@ if __name__ == '__main__':
                     'mean_CommCount', 'mean_Length', 'mean_Score']
         logging.info("x, y attrs: {}".format(xy_attrs))
 
+        z_attrs_disc = ['Id_user', 'Location']
+        z_attrs_cont = ['Reputation', 'Views', 'UpVotes', 'DownVotes', 'Age']
+
         for i, x in enumerate(xy_attrs):
             for y in xy_attrs[i+1:]:
+                xvals = user_question_df[x].tolist()
+                yvals = user_question_df[y].tolist()
                 logging.debug("examining x={}, y={}".format(x, y))
 
-                marg = Contingency.rsquare(user_question_df[x].tolist(),
-                                           user_question_df[y].tolist())
+                marg = Contingency.rsquare(xvals, yvals)
                 logging.debug("marg rsquare: {}".format(marg))
 
-                
+                for z in z_attrs_disc:
+                    stat, pval, eff = Contingency.pearsonBlock(xvals, yvals,
+                                                               user_question_df[z].tolist(),
+                                                               pVal=True, effect=True)
+                    logging.debug("cond {}: {} {}".format(z, stat, pval))
+
+                for z in z_attrs_cont:
+                    stat, pval = Contingency.partial_corr(xvals, yvals,
+                                                          user_question_df[z].tolist(), pval=True)
+                    logging.debug("cond {}: {} {}".format(z, stat, pval))
+
 
 
 
