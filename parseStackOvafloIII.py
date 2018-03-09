@@ -190,7 +190,9 @@ def parse_users(infile, selects=None):
 
 def pearson(df_orig, x, y):
     xy_mat = df_orig[[x, y]].dropna().as_matrix()
-    stat, pval = Contingency.stats.pearsonr(xy_mat[:, 0], xy_mat[:, 1])
+    # stat, pval = Contingency.stats.pearsonr(xy_mat[:, 0], xy_mat[:, 1])
+    stat = Contingency.zscore(xy_mat[:, 0].tolist(), xy_mat[:, 1].tolist())
+    pval = Contingency.zscoreP(stat)
     return stat, pval
 
 def pearson_partial(df_orig, x, y, z):
