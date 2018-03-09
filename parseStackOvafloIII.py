@@ -285,6 +285,9 @@ if __name__ == '__main__':
         logging.debug("joined table has {} rows".format(len(user_answer_df)))
 
         logging.info("joining answers and questions")
+        print ans_df.head(), "\n", ans_df.dtypes
+        print quest_df.head(), "\n", quest_df.dtypes
+
         question_answer_df = ans_df.join(quest_df, on='ParentId', rsuffix='_quest')
         logging.debug("joined table has {} rows".format(len(question_answer_df)))
         print question_answer_df.head(), "\n", question_answer_df.dtypes
@@ -363,6 +366,10 @@ if __name__ == '__main__':
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
+
+            xy_attrs = ['Score', 'CommentCount', 'Length'] #, 'Accepted']
+            for i, x in enumerate(xy_attrs):
+                for y in xy_attrs[i+1:]:
 
 
 
