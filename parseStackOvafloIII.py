@@ -188,6 +188,23 @@ def parse_users(infile, selects=None):
     return pd.DataFrame(users, index=index_vals, columns=USER_FIELDS, dtype=np.int64)
 
 
+def pearson(df_orig, x, y):
+    xy_mat = df_orig[[x, y]].dropna().as_matrix()
+    stat, pval = Contingency.stats.pearsonr(xy_mat[:, 0], xy_mat[:, 1])
+    return stat, pval
+
+def pearson_partial(df_orig, x, y, z):
+    xyz_mat = df_orig[[x, y, z]].dropna().as_matrix()
+    stat, pval = Contingency.partial_corr(xyz_mat[:, 0], xyz_mat[:, 1], xyz_mat[:, 2], pval=True)
+    return stat, pval
+
+def pearson_block(df_orig, x, y, z):
+    xyz_mat = df_orig[[x, y, z]].dropna().as_matrix()
+    x_lst = xyz_mat[:, 0].tolist()
+    y_lst = xyz_mat[:, 1].tolist()
+    z_lst = xyz_mat[:, 2].tolist()
+    stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+    return stat, pval
 
 
 
@@ -282,27 +299,30 @@ if __name__ == '__main__':
 
             for i, x in enumerate(xy_attrs):
                 for y in xy_attrs[i+1:]:
-                    xy_mat = user_question_df.as_matrix(columns=[x, y])
-                    x_arr = xy_mat[:, 0]
-                    y_arr = xy_mat[:, 1]
-                    x_lst = x_arr.tolist()
-                    y_lst = y_arr.tolist()
+                    # xy_mat = user_question_df.as_matrix(columns=[x, y])
+                    # x_arr = xy_mat[:, 0]
+                    # y_arr = xy_mat[:, 1]
+                    # x_lst = x_arr.tolist()
+                    # y_lst = y_arr.tolist()
                     logging.debug("examining x={}, y={}".format(x, y))
 
                     # marg = Contingency.rsquare(xvals, yvals)
-                    r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
-                    logging.debug("marg rsquare: {} p={}".format(r, pval))
-                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, r, pval))
+                    # r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
+                    stat, pval = pearson(user_question_df, x, y)
+                    logging.debug("marg rsquare: {} p={}".format(stat, pval))
+                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
 
                     for z in z_attrs_disc:
-                        z_lst = user_question_df[z].tolist()
-                        stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        # z_lst = user_question_df[z].tolist()
+                        # stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        stat, pval = pearson_block(user_question_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
                     for z in z_attrs_cont:
-                        zvals = user_question_df.as_matrix(columns=[z])
-                        stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        # zvals = user_question_df.as_matrix(columns=[z])
+                        # stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        stat, pval = pearson_partial(user_question_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
@@ -311,27 +331,30 @@ if __name__ == '__main__':
             for i, x in enumerate(xy_attrs):
                 for y in xy_attrs[i+1:]:
 
-                    xy_mat = user_answer_df.as_matrix(columns=[x, y])
-                    x_arr = xy_mat[:, 0]
-                    y_arr = xy_mat[:, 1]
-                    x_lst = x_arr.tolist()
-                    y_lst = y_arr.tolist()
+                    # xy_mat = user_answer_df.as_matrix(columns=[x, y])
+                    # x_arr = xy_mat[:, 0]
+                    # y_arr = xy_mat[:, 1]
+                    # x_lst = x_arr.tolist()
+                    # y_lst = y_arr.tolist()
                     logging.debug("examining x={}, y={}".format(x, y))
 
                     # marg = Contingency.rsquare(xvals, yvals)
-                    r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
-                    logging.debug("marg rsquare: {} p={}".format(r, pval))
-                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, r, pval))
+                    # r, pval = Contingency.stats.pearsonr(x_arr, y_arr)
+                    stat, pval = pearson(user_question_df, x, y)
+                    logging.debug("marg rsquare: {} p={}".format(stat, pval))
+                    resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
 
                     for z in z_attrs_disc:
-                        z_lst = user_answer_df[z].tolist()
-                        stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        # z_lst = user_answer_df[z].tolist()
+                        # stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
+                        stat, pval = pearson_block(user_question_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
                     for z in z_attrs_cont:
-                        zvals = user_answer_df.as_matrix(columns=[z])
-                        stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        # zvals = user_answer_df.as_matrix(columns=[z])
+                        # stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
+                        stat, pval = pearson_partial(user_question_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
