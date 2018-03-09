@@ -18,7 +18,7 @@ def select_by_date(tag, start_dt, end_dt, infile, outfile, date_attr='CreationDa
             parsed = ET.fromstring(line)
             if date_attr in parsed.attrib:
                 # 2008-07-31T23:55:37.967
-                dt = datetime.datetime.strptime(parsed.attrib[date_attr], "%Y-%m-%dT%H:%M:%S")
+                dt = datetime.datetime.strptime(parsed.attrib[date_attr], "%Y-%m-%dT%H:%M:%S.%f")
                 if (dt < start_dt) or (end_dt <= dt):
                     bad_count += 1
                     continue
