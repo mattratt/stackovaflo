@@ -104,10 +104,10 @@ def parse_posts(infile):
             continue
 
         if rec.attrib['PostTypeId'] == '1':  # question
-            questions.append(tuple(rec.attrib[attr] for attr in QUESTION_FIELDS))
+            questions.append(tuple(rec.attrib.get(attr) for attr in QUESTION_FIELDS))
 
         else:  # answer
-            answers.append(tuple(rec.attrib[attr] for attr in ANSWER_FIELDS))
+            answers.append(tuple(rec.attrib.get(attr) for attr in ANSWER_FIELDS))
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
     question_df = pd.DataFrame(questions, index="Id", columns=QUESTION_FIELDS)
@@ -136,7 +136,7 @@ def parse_users(infile, selects=None):
         if rec.tag != 'row':
             continue
 
-        if (selects is not None) and (rec.attrib['Id'] not in selects):
+        if (selects is not None) and (rec.attrib.get('Id') not in selects):
             reject_count += 1
             continue
 
