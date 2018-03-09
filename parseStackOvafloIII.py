@@ -229,7 +229,7 @@ if __name__ == '__main__':
         print answer_aggregs_df.head(), "\n", answer_aggregs_df.dtypes
 
         logging.info("joining answer cols to questions")
-        quest_df = quest_df.join(answer_aggregs_df, on='ParentId', rsuffix='answer_')
+        quest_df = quest_df.join(answer_aggregs_df, rsuffix='answer_')
         print quest_df.head()
 
         # logging.info("joining users and questions")
