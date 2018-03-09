@@ -245,7 +245,7 @@ if __name__ == '__main__':
         print "\n**************************\n"
 
         # for some reason this is object
-        quest_df[['OwnerUserId']] = quest_df[['OwnerUserId']].apply(pd.to_numeric)
+        quest_df[['OwnerUserId']] = pd.to_numeric(quest_df[['OwnerUserId']], downcast='integer')
         print quest_df.head(), "\n", quest_df.dtypes
 
         key_user = 230814
