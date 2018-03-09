@@ -127,7 +127,8 @@ def get_index_vals(tups, col_names, index_col_name):
 
 def parse_users(infile, selects=None):
     if selects is not None:
-        select = set(selects)
+        selects = set(selects)
+        logging.debug("selecting from {} unique users".format(len(selects)))
 
     users = []
     reject_count = 0
@@ -143,11 +144,11 @@ def parse_users(infile, selects=None):
         if rec.tag != 'row':
             continue
 
-        if (selects is not None) and (rec.attrib.get('Id') not in selects):
+        if (selects is not None) and (rec.attrib['Id'] not in selects):
             reject_count += 1
             continue
 
-        users.append(tuple(rec.attrib[attr] for attr in USER_FIELDS))
+        users.append(tuple(rec.attrib.get(attr) for attr in USER_FIELDS))
 
     logging.info("creating DataFrame for {} users".format(len(users)))
     index_vals = get_index_vals(users, USER_FIELDS, 'Id')
