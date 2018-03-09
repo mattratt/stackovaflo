@@ -96,9 +96,9 @@ def parse_posts(infile):
 
         try:
             rec = ET.fromstring(line)
-        except Exception as err:
+        except ET.ParseError as err:
             logging.debug("can't parse line {}: {}".format(i, line))
-            raise err
+            continue
 
         if rec.tag != 'row':
             continue
@@ -127,8 +127,12 @@ def parse_users(infile, selects=None):
     for i, line in enumerate(infile):
         if i % 10000 == 0:
             logging.debug("\t{}\t{} users, {} rejects".format(i, len(users), reject_count))
+        try:
+            rec = ET.fromstring(line)
+        except ET.ParseError as err:
+            logging.debug("can't parse line {}: {}".format(i, line))
+            continue
 
-        rec = ET.fromstring(line)
         if rec.tag != 'row':
             continue
 
