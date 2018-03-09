@@ -146,6 +146,8 @@ if __name__ == '__main__':
 
     if 0:  # do selection by date
         USAGE = sys.argv[0] + " dt1 dt2 infile outfile"
+        if len(sys.argv) < 5:
+            sys.exit(" usage: " + USAGE)
         dt1 = datetime.datetime.strptime(sys.argv[1], "%Y%m%d")
         dt2 = datetime.datetime.strptime(sys.argv[2], "%Y%m%d")
         with open(sys.argv[3], 'r') as infile, open(sys.argv[4], 'w') as outfile:
@@ -153,6 +155,8 @@ if __name__ == '__main__':
 
     if 1:  # parse questions, answers, users
         USAGE = sys.argv[0] + " postfile userfile"
+        if len(sys.argv) < 3:
+            sys.exit(" usage: " + USAGE)
         with open(sys.argv[1], 'r') as infile:
             quest_df, ans_df = parse_posts(infile)
         with open(sys.argv[2], 'r') as infile:
