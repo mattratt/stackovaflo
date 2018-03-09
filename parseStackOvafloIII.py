@@ -1,3 +1,4 @@
+import sys
 import logging
 import datetime
 import xml.etree.ElementTree as ET
@@ -27,8 +28,15 @@ def select_by_date(tag, start_dt, end_dt, infile, outfile, date_attr='CreationDa
     logging.debug("kept {} / {} {} records".format(good_count, good_count+bad_count, tag))
 
 
+####################################
 
+if __name__ == '__main__':
 
-
+    if 1:
+        # do selection by date
+        dt1 = datetime.datetime.strptime(sys.argv[1], "%Y%m%d")
+        dt2 = datetime.datetime.strptime(sys.argv[2], "%Y%m%d")
+        with open(sys.argv[3], 'r') as infile, open(sys.argv[4], 'w') as outfile:
+            select_by_date('row', dt1, dt2, infile, outfile)
 
 
