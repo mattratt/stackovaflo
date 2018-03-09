@@ -280,10 +280,15 @@ if __name__ == '__main__':
         logging.debug("joined table has {} rows".format(len(user_question_df)))
         # print user_question_df.head(), "\n", user_question_df.dtypes
 
-
-        logging.info("joining answers and questions")
+        logging.info("joining users and answers")
         user_answer_df = ans_df.join(user_df, on='OwnerUserId', rsuffix='_user')
         logging.debug("joined table has {} rows".format(len(user_answer_df)))
+
+        logging.info("joining answers and questions")
+        question_answer_df = ans_df.join(quest_df, on='ParentId', rsuffix='_quest')
+        logging.debug("joined table has {} rows".format(len(question_answer_df)))
+        print question_answer_df.head(), "\n", question_answer_df.dtypes
+
 
 
         with open("indy_results.tsv", 'w') as resultfile:
@@ -357,6 +362,8 @@ if __name__ == '__main__':
                         stat, pval = pearson_partial(user_question_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
+
+
 
 
 
