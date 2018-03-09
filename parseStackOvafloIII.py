@@ -288,7 +288,7 @@ if __name__ == '__main__':
         logging.info("joining answers and questions")
         # print ans_df.head(), "\n", ans_df.dtypes
         # print quest_df.head(), "\n", quest_df.dtypes
-        key = 2353197
+        key = '2353197'
         print "ans:\n", ans_df.loc[ans_df['ParentId'] == key]
         print "quest:\n", quest_df.loc[quest_df['Id'] == key]
         print "quest:\n", quest_df.loc[key]
@@ -303,6 +303,7 @@ if __name__ == '__main__':
         logging.debug("joined table has {} rows".format(len(question_answer_df)))
         print question_answer_df.head(), "\n", question_answer_df.dtypes
 
+        sys.exit()
 
 
         with open("indy_results.tsv", 'w') as resultfile:
