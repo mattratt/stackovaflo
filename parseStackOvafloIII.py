@@ -174,10 +174,15 @@ if __name__ == '__main__':
         USAGE = sys.argv[0] + " postfile userfile"
         if len(sys.argv) < 3:
             sys.exit(" usage: " + USAGE)
+
         with open(sys.argv[1], 'r') as infile:
             quest_df, ans_df = parse_posts(infile)
+            print quest_df.head()
+            print ans_df.head()
+
         with open(sys.argv[2], 'r') as infile:
             user_ids = quest_df.OwnerUserId.unique() + quest_df.OwnerUserId.unique()
             user_df = parse_users(infile, user_ids)
+            print user_df.head()
 
 
