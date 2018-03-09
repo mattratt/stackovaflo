@@ -384,15 +384,11 @@ if __name__ == '__main__':
                     resultfile.write("q.{}\tq.{}\t{}\t{}\t{}\n".format(x, y, None, stat, pval))
 
                     for z in z_attrs_disc:
-                        # z_lst = user_answer_df[z].tolist()
-                        # stat, pval = Contingency.pearsonBlock(x_lst, y_lst, z_lst, pVal=True)
                         stat, pval = pearson_block(question_answer_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
 
                     for z in z_attrs_cont:
-                        # zvals = user_answer_df.as_matrix(columns=[z])
-                        # stat, pval = Contingency.partial_corr(x_arr, y_arr, zvals, pval=True)
                         stat, pval = pearson_partial(question_answer_df, x, y, z)
                         logging.debug("cond {}: {} {}".format(z, stat, pval))
                         resultfile.write("q.{}\tq.{}\tu.{}\t{}\t{}\n".format(x, y, z, stat, pval))
