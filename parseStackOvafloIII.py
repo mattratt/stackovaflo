@@ -256,5 +256,6 @@ if __name__ == '__main__':
         logging.info("joining users and questions")
         user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='_user')
         logging.debug("joined table has {} rows".format(len(user_question_df)))
-        print user_question_df.head()
+        print user_question_df.head(), "\n", user_question_df.dtypes
+
 
