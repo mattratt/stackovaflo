@@ -285,9 +285,13 @@ if __name__ == '__main__':
                                                                pVal=True, effect=True)
                     logging.debug("cond {}: {} {}".format(z, stat, pval))
 
+                mat = user_question_df.as_matrix(columns=[x, y])
+                xvals = mat[:, 0]
+                yvals = mat[:, 1]
                 for z in z_attrs_cont:
-                    stat, pval = Contingency.partial_corr(user_question_df[x], user_question_df[y],
-                                                          user_question_df[z], pval=True)
+                    zvals = user_question_df.as_matrix(columns=[z])[:, 0]
+
+                    stat, pval = Contingency.partial_corr(xvals, yvals, zvals, pval=True)
                     logging.debug("cond {}: {} {}".format(z, stat, pval))
 
 
