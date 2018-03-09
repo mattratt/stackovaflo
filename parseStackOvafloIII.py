@@ -94,7 +94,12 @@ def parse_posts(infile):
         if i % 10000 == 0:
             logging.debug("\t{}\t{} questions, {} answers".format(i, len(questions), len(answers)))
 
-        rec = ET.fromstring(line)
+        try:
+            rec = ET.fromstring(line)
+        except Exception as err:
+            logging.debug("can't parse line {}: {}".format(i, line))
+            raise err
+
         if rec.tag != 'row':
             continue
 
