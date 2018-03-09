@@ -181,7 +181,7 @@ if __name__ == '__main__':
             print ans_df.head()
 
         with open(sys.argv[2], 'r') as infile:
-            user_ids = quest_df.OwnerUserId.unique() + quest_df.OwnerUserId.unique()
+            user_ids = quest_df['OwnerUserId'].unique() + quest_df['OwnerUserId'].unique()
             user_df = parse_users(infile, user_ids)
             print user_df.head()
 
