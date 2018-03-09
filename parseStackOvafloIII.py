@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(mes
 # CommunityOwnedDate="2009-09-04T13:15:59.820" />
 #
 POST_FIELDS = ['Id', 'CreationDate', 'OwnerUserId', 'Score', 'CommentCount']
-QUESTION_FIELDS = POST_FIELDS + ['ViewCount', 'AnswerCount' 'FavoriteCount' 'AcceptedAnswerId']
+QUESTION_FIELDS = POST_FIELDS + ['ViewCount', 'AnswerCount', 'FavoriteCount', 'AcceptedAnswerId']
 ANSWER_FIELDS = POST_FIELDS + ['ParentId']
 # skipped: PostTypeId, Body, Title, Tags, LastEditorUserId, LastEditorDisplayName, LastEditDate,
 # LastActivityDate
@@ -97,7 +97,7 @@ def parse_posts(infile):
         try:
             rec = ET.fromstring(line)
         except ET.ParseError as err:
-            logging.debug("can't parse line {}: {}".format(i, line))
+            logging.debug("can't parse line {}: {}".format(i, line.strip()))
             continue
 
         if rec.tag != 'row':
@@ -130,7 +130,7 @@ def parse_users(infile, selects=None):
         try:
             rec = ET.fromstring(line)
         except ET.ParseError as err:
-            logging.debug("can't parse line {}: {}".format(i, line))
+            logging.debug("can't parse line {}: {}".format(i, line.strip()))
             continue
 
         if rec.tag != 'row':
