@@ -3,6 +3,7 @@ import logging
 import datetime
 import xml.etree.ElementTree as ET
 import pandas as pd
+import numpy as np
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
 pd.set_option('display.width', 240)
@@ -135,11 +136,13 @@ def parse_posts(infile):
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
     index_vals = get_index_vals(questions, QUESTION_FIELDS, 'Id')
-    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS+['Length'], dtype='int64')
+    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS+['Length'],
+                               dtype=np.int64)
 
     logging.info("creating DataFrame for {} posts".format(len(answers)))
     index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id')
-    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS+['Length'])
+    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS+['Length'],
+                             dtype=np.int64)
 
     return question_df, answer_df
 
@@ -176,7 +179,7 @@ def parse_users(infile, selects=None):
 
     logging.info("creating DataFrame for {} users".format(len(users)))
     index_vals = get_index_vals(users, USER_FIELDS, 'Id')
-    return pd.DataFrame(users, index=index_vals, columns=USER_FIELDS)
+    return pd.DataFrame(users, index=index_vals, columns=USER_FIELDS, dtype=np.int64)
 
 
 
