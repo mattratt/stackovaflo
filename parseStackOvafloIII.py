@@ -121,19 +121,24 @@ def parse_posts(infile):
         if rec.tag != 'row':
             continue
 
+        # this one's special since it's calculated
+        body_len = len(rec.attrib['Body']) if 'Body' in rec.attrib else None
+
         if rec.attrib['PostTypeId'] == '1':  # question
-            questions.append(tuple(rec.attrib.get(attr) for attr in QUESTION_FIELDS))
+            vals = [ rec.attrib.get(attr) for attr in QUESTION_FIELDS ] + [body_len]
+            questions.append(tuple(vals))
 
         else:  # answer
-            answers.append(tuple(rec.attrib.get(attr) for attr in ANSWER_FIELDS))
+            vals = [ rec.attrib.get(attr) for attr in ANSWER_FIELDS ] + [body_len]
+            answers.append(tuple(vals))
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
     index_vals = get_index_vals(questions, QUESTION_FIELDS, 'Id')
-    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS)
+    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS+['Length'])
 
     logging.info("creating DataFrame for {} posts".format(len(answers)))
     index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id')
-    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS)
+    answer_df = pd.DataFrame(answers, index=index_vals, columns=ANSWER_FIELDS+['Length'])
 
     return question_df, answer_df
 
@@ -208,8 +213,14 @@ if __name__ == '__main__':
             user_df = parse_users(infile)
             print user_df.head()
 
-        # join user table to questions
-        logging.info("joining users and questions")
-        user_question_df = quest_df.join(user_df, on='OwnerUserId')
-        logging.debug("joined table has {} rows".format(len(user_question_df)))
+        # add answer aggregs to questions, then join user table
+        answer_aggregs_df = ans_df.groupby('ParentId').agg({'Score': 'mean',
+                                                            'CommentCount': 'mean',
+                                                            'Length': 'mean'})
+        answer_aggregs_df.columns = ["_".join(x) for x in answer_aggregs_df.columns.ravel()]
+        print answer_aggregs_df.head()
 
+        logging.info("joining users and questions")
+        user_question_df = quest_df.join(user_df, on='OwnerUserId', rsuffix='user_')
+        logging.debug("joined table has {} rows".format(len(user_question_df)))
+        print user_question_df.head()
