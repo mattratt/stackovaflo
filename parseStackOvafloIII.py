@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
+pd.set_option('display.width', 240)
 
 
 #  <row Id="6"
