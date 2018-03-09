@@ -135,7 +135,7 @@ def parse_posts(infile):
 
     logging.info("creating DataFrame for {} questions".format(len(questions)))
     index_vals = get_index_vals(questions, QUESTION_FIELDS, 'Id')
-    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS+['Length'])
+    question_df = pd.DataFrame(questions, index=index_vals, columns=QUESTION_FIELDS+['Length'], dtype='int64')
 
     logging.info("creating DataFrame for {} posts".format(len(answers)))
     index_vals = get_index_vals(answers, ANSWER_FIELDS, 'Id')
